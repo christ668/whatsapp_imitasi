@@ -1,8 +1,8 @@
-import { List, ListItem } from '@material-ui/core';
-import moment from 'moment';
-import React from 'react';
-import styled from 'styled-components';
-import { chats } from '../../db';
+import { List, ListItem } from "@material-ui/core";
+import moment from "moment";
+import React from "react";
+import styled from "styled-components";
+import { useState, useMemo } from "react";
 
 //container awal
 const Container = styled.div`
@@ -65,21 +65,61 @@ const MessageDate = styled.div`
  - error karena format createAT tidak dikenali, mungkin karena data tidak sesuai dengan format db, coba konfirm -> solusi sementara menggunakan lib
    moment untuk extract time saja.
 */
-const ChatsList: React.FC = () => (
-  <Container>
-    <StyledList>
-      {chats.map((chat) => (
-        <StyledListItem key={chat.id} button>
-          <ChatPicture src={chat.picture} alt="Profile" />
-          <ChatInfo>
-            <ChatName>{chat.name}</ChatName>
-            <MessageContent>{chat?.lastMessage?.content}</MessageContent>
-            <MessageDate>{moment(chat?.lastMessage?.createdAt).format('HH:mm:ss')}</MessageDate>
-          </ChatInfo>
-        </StyledListItem>
-      ))}
-    </StyledList>
-  </Container>
-);
+
+const getChatsQuery = `
+  query GetChats {
+    chats {
+      id
+      name
+      picture
+      lastMessage {
+        id
+        content
+        createdAt
+      }
+    }
+  }
+`;
+
+const ChatsList: React.FC = () => {
+  const [chats, setChats] = useState<any[]>([]);
+
+  useMemo(async () => {
+    //const body = await fetch(`${process.env.SERVER_DUMMY}/chats`);
+    //ChatList.tsxconst body = await fetch(`http://localhost:4000/chats`);
+    //const chats = await body.json();
+
+    const body = await fetch(`http://localhost:4000/graphql`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query: getChatsQuery }),
+    });
+    const {
+      data: { chats },
+    } = await body.json();
+    setChats(chats);
+  }, []);
+
+  return (
+    <Container>
+      <StyledList>
+        {chats.map((chat) => (
+          <StyledListItem key={chat.id} button>
+            <ChatPicture src={chat.picture} alt="Profile" />
+            <ChatInfo>
+              <ChatName>{chat.name}</ChatName>
+              <MessageContent>{chat?.lastMessage?.content}</MessageContent>
+              <MessageDate>
+                {moment(chat?.lastMessage?.createdAt).format("HH:mm:ss")}
+              </MessageDate>
+            </ChatInfo>
+          </StyledListItem>
+        ))}
+      </StyledList>
+    </Container>
+  );
+};
 
 export default ChatsList;
