@@ -2,7 +2,8 @@ import { List, ListItem } from "@material-ui/core";
 import moment from "moment";
 import React from "react";
 import styled from "styled-components";
-import { useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
+import { History } from "history";
 
 //container awal
 const Container = styled.div`
@@ -81,7 +82,11 @@ const getChatsQuery = `
   }
 `;
 
-const ChatsList: React.FC = () => {
+interface ChatsListProps {
+  history: History;
+}
+
+const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
   const [chats, setChats] = useState<any[]>([]);
 
   useMemo(async () => {
@@ -102,11 +107,23 @@ const ChatsList: React.FC = () => {
     setChats(chats);
   }, []);
 
+  const navToChat = useCallback(
+    (chat) => {
+      history.push(`chats/${chat.id}`);
+    },
+    [history]
+  );
+
   return (
     <Container>
       <StyledList>
         {chats.map((chat) => (
-          <StyledListItem key={chat.id} button>
+          <StyledListItem
+            key={chat.id}
+            data-testid="chat"
+            button
+            onClick={navToChat.bind(null, chat)}
+          >
             <ChatPicture src={chat.picture} alt="Profile" />
             <ChatInfo>
               <ChatName>{chat.name}</ChatName>
