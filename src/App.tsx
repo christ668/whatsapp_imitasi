@@ -1,14 +1,9 @@
-import React from "react";
-import "./App.css";
-import {
-  BrowserRouter,
-  Route,
-  Redirect,
-  RouteComponentProps,
-} from "react-router-dom";
-import ChatRoomScreen from "./components/ChatRoomScreen";
-import ChatsListScreen from "./components/ChatListScreen";
-import AnimatedSwitch from "./components/AnimatedSwitch";
+import React from 'react';
+import { BrowserRouter, Redirect, Route, RouteComponentProps } from 'react-router-dom';
+import './App.css';
+import AnimatedSwitch from './components/AnimatedSwitch';
+import ChatsListScreen from './components/ChatListScreen';
+import ChatRoomScreen from './components/ChatRoomScreen';
 
 function App() {
   return (
@@ -21,14 +16,12 @@ function App() {
         <Route
           exact
           path="/chats/:chatId"
-          component={({
-            match,
-            history,
-          }: RouteComponentProps<{ chatId: string }>) => (
+          component={({ match, history }: RouteComponentProps<{ chatId: string }>) => (
             <ChatRoomScreen chatId={match.params.chatId} history={history} />
           )}
         />
       </AnimatedSwitch>
+      <Redirect from="/" to="chats" />
       {/* <Route exact path="/" render={redirectToChats} /> */}
     </BrowserRouter>
   );
