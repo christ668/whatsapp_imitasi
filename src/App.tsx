@@ -10,7 +10,7 @@ import AnimatedSwitch from "./components/AnimatedSwitch";
 import ChatsListScreen from "./components/ChatListScreen";
 import ChatRoomScreen from "./components/ChatRoomScreen";
 import { useCacheService } from "./services/cache.service";
-
+import AuthScreen from "./components/AuthScreen";
 // function App() {
 //   return (
 //     // <div>
@@ -42,6 +42,7 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <AnimatedSwitch>
+        <Route exact path="/sign-in" component={AuthScreen} />
         <Route exact path="/chats" component={ChatsListScreen} />
 
         <Route
@@ -60,6 +61,6 @@ const App: React.FC = () => {
   );
 };
 
-const redirectToChats = () => <Redirect to="/chats" />;
+const redirectToChats = () => <Redirect to="/sign-in" />;
 
 export default App;
