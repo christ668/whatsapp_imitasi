@@ -7,12 +7,14 @@ import ChatNavbar from "./ChatNavbar";
 import MessageInput from "./MessageInput";
 import MessagesList from "./MessagesList";
 import { History } from "history";
-import {
-  ChatsQuery,
-  useGetChatQuery,
-  useAddMessageMutation,
-} from "../../graphql/types";
-import * as queries from "../../graphql/queries";
+// import {
+//   ChatsQuery,
+//   useGetChatQuery,
+//   useAddMessageMutation,
+// } from "../../graphql/types";
+// import * as queries from "../../graphql/queries";
+import { useGetChatQuery, useAddMessageMutation } from "../../graphql/types";
+import { writeMessage } from "../../services/cache.service";
 import * as fragments from "../../graphql/fragments";
 
 const Container = styled.div`
@@ -77,77 +79,82 @@ const ChatRoomScreen: React.FC<ChatRoomScreenParams> = ({
             __typename: "Message",
             id: Math.random().toString(36).substr(2, 9),
             createdAt: new Date(),
+            chat: {
+              __typename: "Chat",
+              id: chatId,
+            },
             content,
           },
         },
         update: (client, { data }) => {
           if (data && data.addMessage) {
-            type FullChat = { [key: string]: any };
-            let fullChat;
-            const chatIdFromStore = defaultDataIdFromObject(chat);
+            // type FullChat = { [key: string]: any };
+            // let fullChat;
+            // const chatIdFromStore = defaultDataIdFromObject(chat);
 
-            if (chatIdFromStore === null) {
-              return;
-            }
-            try {
-              fullChat = client.readFragment<FullChat>({
-                id: chatIdFromStore,
-                fragment: fragments.fullChat,
-                fragmentName: "FullChat",
-              });
-            } catch (e) {
-              return;
-            }
+            // if (chatIdFromStore === null) {
+            //   return;
+            // }
+            // try {
+            //   fullChat = client.readFragment<FullChat>({
+            //     id: chatIdFromStore,
+            //     fragment: fragments.fullChat,
+            //     fragmentName: "FullChat",
+            //   });
+            // } catch (e) {
+            //   return;
+            // }
 
-            if (fullChat === null || fullChat.messages === null) {
-              return;
-            }
-            if (
-              fullChat.messages.some(
-                (currentMessage: any) =>
-                  data.addMessage && currentMessage.id === data.addMessage.id
-              )
-            ) {
-              return;
-            }
+            // if (fullChat === null || fullChat.messages === null) {
+            //   return;
+            // }
+            // if (
+            //   fullChat.messages.some(
+            //     (currentMessage: any) =>
+            //       data.addMessage && currentMessage.id === data.addMessage.id
+            //   )
+            // ) {
+            //   return;
+            // }
 
-            fullChat.messages.push(data.addMessage);
-            fullChat.lastMessage = data.addMessage;
+            // fullChat.messages.push(data.addMessage);
+            // fullChat.lastMessage = data.addMessage;
 
-            client.writeFragment({
-              id: chatIdFromStore,
-              fragment: fragments.fullChat,
-              fragmentName: "FullChat",
-              data: fullChat,
-            });
+            // client.writeFragment({
+            //   id: chatIdFromStore,
+            //   fragment: fragments.fullChat,
+            //   fragmentName: "FullChat",
+            //   data: fullChat,
+            // });
 
-            let clientChatsData: ChatsQuery | null;
-            try {
-              clientChatsData = client.readQuery({
-                query: queries.chats,
-              });
-            } catch (e) {
-              return;
-            }
+            // let clientChatsData: ChatsQuery | null;
+            // try {
+            //   clientChatsData = client.readQuery({
+            //     query: queries.chats,
+            //   });
+            // } catch (e) {
+            //   return;
+            // }
 
-            if (!clientChatsData || !clientChatsData.chats) {
-              return null;
-            }
-            const chats = clientChatsData.chats;
+            // if (!clientChatsData || !clientChatsData.chats) {
+            //   return null;
+            // }
+            // const chats = clientChatsData.chats;
 
-            const chatIndex = chats.findIndex(
-              (currentChat: any) => currentChat.id === chatId
-            );
-            if (chatIndex === -1) return;
-            const chatWhereAdded = chats[chatIndex];
+            // const chatIndex = chats.findIndex(
+            //   (currentChat: any) => currentChat.id === chatId
+            // );
+            // if (chatIndex === -1) return;
+            // const chatWhereAdded = chats[chatIndex];
 
-            chats.splice(chatIndex, 1);
-            chats.unshift(chatWhereAdded);
+            // chats.splice(chatIndex, 1);
+            // chats.unshift(chatWhereAdded);
 
-            client.writeQuery({
-              query: queries.chats,
-              data: { chats: chats },
-            });
+            // client.writeQuery({
+            //   query: queries.chats,
+            //   data: { chats: chats },
+            // });
+            writeMessage(client, data.addMessage);
           }
         },
       });
