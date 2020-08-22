@@ -1,6 +1,8 @@
 import moment from "moment";
 import React from "react";
 import styled from "styled-components";
+import { useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import { ChatQueryMessage } from "./index";
 
 const Container = styled.div`
@@ -64,15 +66,26 @@ interface MessagesListProps {
   messages: Array<ChatQueryMessage>;
 }
 
-const MessagesList: React.FC<MessagesListProps> = ({ messages }) => (
-  <Container>
-    {messages.map((message: any) => (
-      <MessageItem key={message.id}>
-        <Contents>{message.content}</Contents>
-        <Timestamp>{moment(message.createdAt).format("HH:mm")}</Timestamp>
-      </MessageItem>
-    ))}
-  </Container>
-);
+const MessagesList: React.FC<MessagesListProps> = ({ messages }) => {
+  const selfRef = useRef(null);
+
+  useEffect(() => {
+    if (!selfRef.current) return;
+
+    const selfDOMNode = ReactDOM.findDOMNode(selfRef.current) as HTMLElement;
+    selfDOMNode.scrollTop = Number.MAX_SAFE_INTEGER;
+  }, [messages.length]);
+
+  return (
+    <Container ref={selfRef}>
+      {messages.map((message: any) => (
+        <MessageItem key={message.id}>
+          <Contents>{message.content}</Contents>
+          <Timestamp>{moment(message.createdAt).format("HH:mm")}</Timestamp>
+        </MessageItem>
+      ))}
+    </Container>
+  );
+};
 
 export default MessagesList;
