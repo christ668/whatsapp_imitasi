@@ -5,8 +5,10 @@ import styled from "styled-components";
 //import { useCallback, useState, useMemo } from "react";
 import { useCallback } from "react";
 import { History } from "history";
-import gql from "graphql-tag";
-import { useQuery } from "@apollo/react-hooks";
+//import gql from "graphql-tag";
+// import * as queries from "../../graphql/queries";
+// import { useQuery } from "@apollo/react-hooks";
+import { useChatsQuery } from "../../graphql/types";
 
 //container awal
 const Container = styled.div`
@@ -71,20 +73,20 @@ const MessageDate = styled.div`
 */
 
 //const getChatsQuery = `
-const getChatsQuery = gql`
-  query GetChats {
-    chats {
-      id
-      name
-      picture
-      lastMessage {
-        id
-        content
-        createdAt
-      }
-    }
-  }
-`;
+// const getChatsQuery = gql`
+//   query GetChats {
+//     chats {
+//       id
+//       name
+//       picture
+//       lastMessage {
+//         id
+//         content
+//         createdAt
+//       }
+//     }
+//   }
+// `;
 
 interface ChatsListProps {
   history: History;
@@ -111,7 +113,7 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
   //   setChats(chats);
   // }, []);
 
-  const { data } = useQuery<any>(getChatsQuery);
+  //const { data } = useQuery<any>(queries.chats);
 
   const navToChat = useCallback(
     (chat) => {
@@ -119,6 +121,8 @@ const ChatsList: React.FC<ChatsListProps> = ({ history }) => {
     },
     [history]
   );
+
+  const { data } = useChatsQuery();
 
   if (data === undefined || data.chats === undefined) {
     return null;

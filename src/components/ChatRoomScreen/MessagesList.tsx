@@ -1,9 +1,8 @@
 import moment from "moment";
 import React from "react";
-import styled from "styled-components";
 import { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import { ChatQueryMessage } from "./index";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: block;
@@ -23,13 +22,11 @@ const MessageItem = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   clear: both;
-
   &::after {
     content: "";
     display: table;
     clear: both;
   }
-
   &::before {
     background-image: url(/assets/message-mine.png);
     content: "";
@@ -47,7 +44,6 @@ const MessageItem = styled.div`
 const Contents = styled.div`
   padding: 5px 7px;
   word-wrap: break-word;
-
   &::after {
     content: " \\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0\\00a0";
     display: inline;
@@ -62,8 +58,13 @@ const Timestamp = styled.div`
   font-size: 12px;
 `;
 
+interface Message {
+  id: string | null;
+  content: string | null;
+  createdAt: string | null;
+}
 interface MessagesListProps {
-  messages: Array<ChatQueryMessage>;
+  messages: Array<Message>;
 }
 
 const MessagesList: React.FC<MessagesListProps> = ({ messages }) => {
@@ -79,9 +80,11 @@ const MessagesList: React.FC<MessagesListProps> = ({ messages }) => {
   return (
     <Container ref={selfRef}>
       {messages.map((message: any) => (
-        <MessageItem key={message.id}>
-          <Contents>{message.content}</Contents>
-          <Timestamp>{moment(message.createdAt).format("HH:mm")}</Timestamp>
+        <MessageItem data-testid="message-item" key={message.id}>
+          <Contents data-testid="message-content">{message.content}</Contents>
+          <Timestamp data-testid="message-date">
+            {moment(message.createdAt).format("HH:mm")}
+          </Timestamp>
         </MessageItem>
       ))}
     </Container>
