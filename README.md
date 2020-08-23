@@ -24,9 +24,11 @@ menggunakan fitur codegen untuk menggenerate script TS yang berisi mutation dan 
 
 ## Penggunaan
 
-download repo ini dah whatsapp-server-imitasi
+-download repo ini dah whatsapp-server-imitasi
 
-gunakan command yarn install untuk install library pada kedua repo terpisah
+-(repo whatsapp-server-imitasi dan whatsapp imitasi harus berada dalam 1 direktori saja)
 
-untuk repo server jalankan yarn start (automatis menjalankan graphql-codegen)
+-gunakan command yarn install untuk install library pada kedua repo terpisah
+
+-untuk repo server jalankan yarn start (automatis menjalankan graphql-codegen)
 untuk frontend jalankan yarn codegen terlebih dahulu sebelum menjalankan yarn start
