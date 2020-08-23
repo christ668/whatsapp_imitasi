@@ -17,7 +17,7 @@ import {
   //split,
 } from "@apollo/client";
 
-const httpUri = "http://localhost:4000/graphql";
+const httpUri = "https://whatsapp-imitasi-backend.herokuapp.com/graphql";
 const wsUri = httpUri.replace(/^https?/, "ws");
 
 const httpLink = new HttpLink({
